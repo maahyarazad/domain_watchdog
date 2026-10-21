@@ -1,0 +1,115 @@
+openapi: 3.1.0
+info:
+  title: Domain Watchdog API
+  version: 1.0.0
+  description: Read-only API consumed by the React dashboard. Served by Uvicorn at http://127.0.0.1:8000.
+servers:
+  - url: http://127.0.0.1:8000
+paths:
+  /api/health:
+    get:
+      summary: Service health (database reachable, monitor running)
+      operationId: getHealth
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Health" }
+        "503":
+          description: Database unreachable or monitor not running
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Health" }
+  /api/domains/status:
+    get:
+      summary: Current status and uptime for every active domain (FR-008)
+      operationId: listDomainStatus
+      responses:
+        "200":
+          description: One entry per active domain, ordered by hostname
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [generated_at, interval_seconds, domains]
+                properties:
+                  generated_at: { type: string, format: date-time }
+                  interval_seconds: { type: integer, example: 5 }
+                  domains:
+                    type: array
+                    items: { $ref: "#/components/schemas/DomainStatus" }
+  /api/domains/{hostname}/checks:
+    get:
+      summary: Recent check history for one domain, newest first (FR-009)
+      operationId: listDomainChecks
+      parameters:
+        - name: hostname
+          in: path
+          required: true
+          schema: { type: string, example: german-emirates-club.com }
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 1000, default: 100 }
+      responses:
+        "200":
+          description: Check history
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [hostname, checks]
+                properties:
+                  hostname: { type: string }
+                  checks:
+                    type: array
+                    items: { $ref: "#/components/schemas/CheckResult" }
+        "404":
+          description: Unknown hostname
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "422":
+          description: Invalid limit
+components:
+  schemas:
+    Health:
+      type: object
+      required: [status, database, monitor]
+      properties:
+        status: { type: string, enum: [ok, degraded] }
+        database: { type: string, enum: [ok, unreachable] }
+        monitor: { type: string, enum: [running, stopped] }
+    DomainStatus:
+      type: object
+      required: [hostname, display_name, is_up, last_checked_at, status_code, response_time_ms, error, uptime_1h, uptime_24h, checks_24h]
+      properties:
+        hostname: { type: string }
+        display_name: { type: string }
+        is_up:
+          type: [boolean, "null"]
+          description: null when no checks exist yet
+        last_checked_at: { type: [string, "null"], format: date-time }
+        status_code: { type: [integer, "null"] }
+        response_time_ms: { type: [integer, "null"] }
+        error: { type: [string, "null"] }
+        uptime_1h:
+          type: [number, "null"]
+          description: Percentage 0–100, null = no data (FR-013)
+        uptime_24h: { type: [number, "null"] }
+        checks_24h: { type: integer }
+    CheckResult:
+      type: object
+      required: [checked_at, is_up, status_code, response_time_ms, error]
+      properties:
+        checked_at: { type: string, format: date-time }
+        is_up: { type: boolean }
+        status_code: { type: [integer, "null"] }
+        response_time_ms: { type: [integer, "null"] }
+        error: { type: [string, "null"], example: timeout }
+    Error:
+      type: object
+      required: [detail]
+      properties:
+        detail: { type: string }

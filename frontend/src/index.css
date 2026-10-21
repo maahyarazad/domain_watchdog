@@ -1,0 +1,65 @@
+body { font-family: system-ui, sans-serif; margin: 0; background: #f6f7f9; color: #1c1f23; }
+main { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+table { width: 100%; border-collapse: collapse; background: #fff; margin-bottom: 24px; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid #e3e6ea; }
+tbody tr { cursor: pointer; }
+tr.selected { background: #eef4ff; }
+.badge { padding: 2px 8px; border-radius: 10px; font-weight: 600; font-size: 0.85em; }
+.badge.up { background: #d8f5df; color: #14692b; }
+.badge.down { background: #fde0e0; color: #a01212; }
+.badge.unknown { background: #e8eaed; color: #555; }
+.banner { background: #fde0e0; color: #a01212; padding: 10px 14px; margin-bottom: 12px; border-radius: 6px; }
+tr.check-down { background: #fff1f1; color: #a01212; }
+@media (prefers-color-scheme: dark) {
+  body { background: #15171a; color: #e6e8eb; }
+  table { background: #1d2024; }
+  th, td { border-bottom-color: #2c3036; }
+  tr.selected { background: #22304a; }
+  tr.check-down { background: #3a2022; color: #ff9d9d; }
+}
+
+/* Uptime line charts */
+.chart-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.chart-header h2 { margin: 0; font-size: 1.1em; }
+.range-selector { display: inline-flex; border: 1px solid #c9ced4; border-radius: 6px; overflow: hidden; }
+.range-selector button { border: 0; background: #fff; color: inherit; padding: 6px 12px; cursor: pointer; font: inherit; }
+.range-selector button + button { border-left: 1px solid #c9ced4; }
+.range-selector button[aria-pressed='true'] { background: #1c5fd4; color: #fff; }
+.chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.chart-card { background: #fff; border-radius: 6px; padding: 10px 12px; min-height: 120px; }
+.chart { margin: 0; }
+.chart.stale svg { opacity: 0.45; }
+.chart figcaption { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+.chart-summary { color: #a01212; font-size: 0.9em; }
+.chart svg { width: 100%; height: auto; display: block; }
+.chart .axis { font-size: 10px; fill: #5b6168; }
+.chart .grid { stroke: #e3e6ea; stroke-width: 1; }
+.chart .line { stroke: #1c5fd4; stroke-width: 1.5; }
+.chart .dot { fill: #1c5fd4; opacity: 0; }
+.chart .dot:hover, .chart .dot:focus { opacity: 1; outline: none; }
+.chart .gap { fill: #8b9199; opacity: 0.18; }
+.chart .hatch-bg { fill: #fde0e0; }
+.chart .hatch-line { stroke: #c62828; }
+.chart .downtime { stroke: #c62828; stroke-width: 1; }
+.chart .downtime:focus { outline: none; stroke-width: 2.5; }
+.chart-tip { font-size: 0.85em; min-height: 1.3em; color: #3c4147; }
+.chart-empty { color: #5b6168; margin: 24px 0; text-align: center; }
+.chart-error { color: #a01212; font-size: 0.85em; margin: 4px 0 0; }
+@media (max-width: 480px) { .chart-grid { grid-template-columns: 1fr; } }
+@media (prefers-color-scheme: dark) {
+  .range-selector { border-color: #3a4048; }
+  .range-selector button { background: #1d2024; }
+  .range-selector button + button { border-left-color: #3a4048; }
+  .range-selector button[aria-pressed='true'] { background: #3b78e7; }
+  .chart-card { background: #1d2024; }
+  .chart-summary, .chart-error { color: #ff9d9d; }
+  .chart .axis { fill: #a4abb3; }
+  .chart .grid { stroke: #2c3036; }
+  .chart .line, .chart .dot { stroke: #6ea0ff; }
+  .chart .dot { fill: #6ea0ff; }
+  .chart .gap { fill: #a4abb3; }
+  .chart .hatch-bg { fill: #3a2022; }
+  .chart .hatch-line, .chart .downtime { stroke: #ff7b7b; }
+  .chart-tip { color: #c8ccd1; }
+  .chart-empty { color: #a4abb3; }
+}
